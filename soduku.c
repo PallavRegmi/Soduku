@@ -1,186 +1,129 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include<stdbool.h>
 
-int counter = 0; ///Used for checking the validity of a solution
+#define N 9
+#define UNASSIGNED '.'
 
-int EmptyPlace(int sudoku[9][9], short* row, short* column)
-{
-    for (*row = 0; *row < 9; (*row)++)
-        for (*column = 0; *column < 9; (*column)++)
-            if (sudoku[*row][*column] == 0)
-                return 1;
-    return 0;
-}
+int row[N][N], col[N][N], box[N][N];
+char sudoku[N][N];
 
-int RowValid(int sudoku[9][9], short row, short number)
-{
-    for (short column = 0; column < 9; column++)
-        if (sudoku[row][column] == number)
-            return 1;
-    return 0;
-}
+// Function to initialize row, col, and box arrays
+void initialize() {
+    int i, j, k;
 
-int ColumnValid(int sudoku[9][9], short column, short number)
-{
-    for (short row = 0; row < 9; row++)
-        if (sudoku[row][column] == number)
-            return 1;
-    return 0;
-}
-
-int BoxValid(int sudoku[9][9], int rowStart, int columnStart, int number)
-{
-    for (int row = 0; row < 3; row++)
-        for (int column = 0; column < 3; column++)
-            if (sudoku[row + rowStart][column + columnStart] == number)
-                return 1;
-    return 0;
-}
-
-int ValidInsertion(int sudoku[9][9], short row, short column, short number)
-{
-    return (RowValid(sudoku, row, number) == 0 &&
-        ColumnValid(sudoku, column, number) == 0 &&
-        BoxValid(sudoku, row - row % 3, column - column % 3, number) == 0 &&
-        sudoku[row][column] == 0);
-}
-
-int SolveSudoku(int sudoku[9][9])
-{
-    short row, column;
-    if (EmptyPlace(sudoku, &row, &column) == 0)
-        return 1;
-
-    for (short number = 1; number <= 9; number++)
-    {
-        if (ValidInsertion(sudoku, row, column, number) == 1)
-        {
-            sudoku[row][column] = number;
-
-            if (SolveSudoku(sudoku) != 0)
-                return 1;
-
-            sudoku[row][column] = 0;
+    for (i = 0; i < N; i++) {
+        for (j = 0; j < N; j++) {
+            row[i][j] = 0;
+            col[i][j] = 0;
+            box[i][j] = 0;
         }
     }
 
-    return 0;
-}
+    for (i = 0; i < N; i++) {
+        for (j = 0; j < N; j++) {
+            if (sudoku[i][j] != UNASSIGNED) {
+                k = sudoku[i][j] - '1';
 
-void SolveAllSudoku(int sudoku[9][9])
-{
-    short row, column;
-    if (EmptyPlace(sudoku, &row, &column) == 0)
-        counter++;
-
-    for (short number = 1; number <= 9; number++)
-    {
-        if (ValidInsertion(sudoku, row, column, number) == 1)
-        {
-            sudoku[row][column] = number;
-            SolveAllSudoku(sudoku);
-            sudoku[row][column] = 0;
-        }
-    }
-
-    //return 0;
-}
-
-
-void PrintSolution(int sudoku[9][9])
-{
-    printf("%c", 201);
-    for (int i = 0; i < 23; i++)
-        if (i != 7 && i != 15)
-            printf("%c", 205);
-        else
-            printf("%c", 203);
-    printf("%c\n", 187); // Drawing the upper line of the sudoku
-
-    for (short i = 0; i < 9; ++i)
-    {
-        if (i % 3 == 0 && i != 0)
-        {
-            printf("%c", 204);
-            for (int i = 0; i < 23; i++)
-                if (i != 7 && i != 15)
-                    printf("%c", 205);
-                else
-                    printf("%c", 206);
-            printf("%c\n", 185); // The midlines
-        }
-
-        printf("%c ", 186);
-        for (short j = 0; j < 9; ++j)
-        {
-            if (j % 3 == 0 && j != 0)
-                printf("%c ", 186);
-            printf("%d ", sudoku[i][j]);
-            if (j == 8)
-                printf("%c", 186);
-        }
-
-        printf("\n");
-    }
-
-    printf("%c", 200);
-    for (int i = 0; i < 23; i++)
-        if (i == 7 || i == 15)
-            printf("%c", 202);
-        else
-            printf("%c", 205);
-    printf("%c\n", 188);
-}
-
-void UnsolveSudoku(int sudoku[9][9], int number)
-{
-    for (int i = 0; i < number; ++i)
-    {
-        int row = rand() % 9;
-        int column = rand() % 9;
-        int aux = sudoku[row][column];
-        if (aux != 0)
-        {
-            sudoku[row][column] = 0;
-            SolveAllSudoku(sudoku);
-            if (counter != 1)
-            {
-                sudoku[row][column] = aux;
-                i--;
+                row[i][k] = 1;
+                col[j][k] = 1;
+                box[(i/3)*3 + j/3][k] = 1;
             }
-            counter = 0;
         }
-        else
-            i--;
     }
 }
 
-int main()
-{
-	int sudoku[9][9];
-	srand((unsigned)time(0));
-	for (int i = 0; i < 9; i++)
-		for (int j = 0; j < 9; j++)
-			sudoku[i][j] = 0;
-	sudoku[rand() % 9][rand() % 9] = rand() % 9 + 1;
-	
-	printf("Here's our sudoku base: \n");
-	PrintSolution(sudoku);
+// Function to solve the Sudoku puzzle
+int solve(int i, int j) {
+    int k;
 
-	printf("Here is a possible sudoku board fully completed: \n");
-	if (SolveSudoku(sudoku) == true)
-		PrintSolution(sudoku);
-	else
-		printf("There is no valid solution\n");
+    if (i == N) {
+        return 1;
+    }
 
-	UnsolveSudoku(sudoku,50);
-	printf("Here is a sudoku board after removing some of the values: \n");
-	PrintSolution(sudoku);
+    if (sudoku[i][j] != UNASSIGNED) {
+        if (j == N-1) {
+            return solve(i+1, 0);
+        } else {
+            return solve(i, j+1);
+        }
+    }
 
-	SolveAllSudoku(sudoku);
-	printf("The number of solutions for this puzzle is always: %d\n", counter);
-	return 0;
+    for (k = 0; k < N; k++) {
+        if (!row[i][k] && !col[j][k] && !box[(i/3)*3 + j/3][k]) {
+            sudoku[i][j] = k + '1';
+            row[i][k] = 1;
+            col[j][k] = 1;
+            box[(i/3)*3 + j/3][k] = 1;
+
+            if (j == N-1) {
+                if (solve(i+1, 0)) {
+                    return 1;
+                }
+            } else {
+                if (solve(i, j+1)) {
+                    return 1;
+                }
+            }
+
+            row[i][k] = 0;
+            col[j][k] = 0;
+            box[(i/3)*3 + j/3][k] = 0;
+            sudoku[i][j] = UNASSIGNED;
+        }
+    }
+
+    return 0;
 }
 
+// Function to print the solved Sudoku puzzle
+void printSudoku() {
+    int i, j;
+    printf("\n");
+    for (i = 0; i < N; i++) {
+        for (j = 0; j < N; j++) {
+            printf("%c", sudoku[i][j]);
+        }
+        
+    }
+}
+
+int main() {
+    int i, j;
+    int count = 0;
+    
+    printf("Enter the Sudoku puzzle (use '.' for empty cells):\n");
+
+    // Take input of the Sudoku puzzle
+    for (i = 0; i < N; i++) {
+        for (j = 0; j < N; j++) {
+            scanf(" %c", &sudoku[i][j]);
+            if (sudoku[i][j] != ' ') {
+                count++;
+            }
+        }
+    }
+
+    // Check if the number of characters entered is 81
+    if (count != 81) {
+        printf("\nError: Enter exactly 81 characters.\n");
+        return 1;
+    }
+
+    // Initialize the row, col, and box arrays
+    initialize();
+    printf("\n");
+    // Solve the Sudoku puzzle
+    for (i = 0; i < N; i++) {
+        for (j = 0; j < N; j++) {
+            printf("%c", sudoku[i][j]);
+        }
+        
+    }
+    if (solve(0, 0)) {
+        printf("\nSolution:\n");
+        printSudoku();
+    } else {
+        printf("\nNo solution found.\n");
+    }
+
+    return 0;
+}
