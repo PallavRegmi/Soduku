@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include<stdbool.h>
 
 int counter = 0; ///Used for checking the validity of a solution
 
@@ -182,3 +183,4 @@ int main()
 	printf("The number of solutions for this puzzle is always: %d\n", counter);
 	return 0;
 }
+
