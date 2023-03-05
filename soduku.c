@@ -104,7 +104,7 @@ void check_duplicate(char sudoku[N][N],int *x) {
                 
                 
                 if (sudoku[i][k] == current && sudoku[i][k] != '.') {
-                    printf("\nError1\n");
+                    printf("\nError\n");
                     *x=1;
                     return;
                 }
@@ -113,7 +113,7 @@ void check_duplicate(char sudoku[N][N],int *x) {
             // Check for duplicates in the column
             for (int k = i + 2; k < N; k++) {
                 if (sudoku[k][j] == current && sudoku[k][j] != '.') {
-                    printf("\nError2\n");
+                    printf("\nError\n");
                     *x=1;
                     return;
                 }
@@ -126,7 +126,7 @@ void check_array(char arr[], int size, int* y) {
     for (int i = 0; i < size; i++) {
         char current = arr[i];
         if ((current < '0' || current > '9') && current != '.') {
-            printf("\nError4\n");
+            printf("\nError\n");
             *y=1;
             return;
         }
@@ -167,7 +167,7 @@ int main() {
         if(y!=1){
             // Check if the number of characters entered is 81
             if (size != 81) {
-                printf("\nError3\n");
+                printf("\nError\n");
                 
             }else{
                
