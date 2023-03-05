@@ -1,7 +1,10 @@
 #include <stdio.h>
+#include<stdlib.h>
+#include<stdbool.h>
 
 #define N 9
 #define UNASSIGNED '.'
+#define CHUNK_SIZE 10
 
 int row[N][N], col[N][N], box[N][N];
 char sudoku[N][N];
@@ -86,44 +89,114 @@ void printSudoku() {
     }
 }
 
-int main() {
-    int i, j;
-    int count = 0;
-    
-    printf("Enter the Sudoku puzzle (use '.' for empty cells):\n");
+void check_duplicate(char sudoku[N][N],int *x) {
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            char current = sudoku[i][j];
 
-    // Take input of the Sudoku puzzle
-    for (i = 0; i < N; i++) {
-        for (j = 0; j < N; j++) {
-            scanf(" %c", &sudoku[i][j]);
-            if (sudoku[i][j] != ' ') {
-                count++;
+            // Skip checking if the character is "."
+            if (current == '.') {
+                continue;
+            }
+
+            // Check for duplicates in the row
+            for (int k = j+1 ; k < N; k++) {
+                
+                
+                if (sudoku[i][k] == current && sudoku[i][k] != '.') {
+                    printf("\nError1\n");
+                    *x=1;
+                    return;
+                }
+            }
+
+            // Check for duplicates in the column
+            for (int k = i + 2; k < N; k++) {
+                if (sudoku[k][j] == current && sudoku[k][j] != '.') {
+                    printf("\nError2\n");
+                    *x=1;
+                    return;
+                }
             }
         }
     }
+}
 
-    // Check if the number of characters entered is 81
-    if (count != 81) {
-        printf("\nError: Enter exactly 81 characters.\n");
-        return 1;
-    }
-
-    // Initialize the row, col, and box arrays
-    initialize();
-    printf("\n");
-    // Solve the Sudoku puzzle
-    for (i = 0; i < N; i++) {
-        for (j = 0; j < N; j++) {
-            printf("%c", sudoku[i][j]);
+void check_array(char arr[], int size, int* y) {
+    for (int i = 0; i < size; i++) {
+        char current = arr[i];
+        if ((current < '0' || current > '9') && current != '.') {
+            printf("\nError4\n");
+            *y=1;
+            return;
         }
-        
     }
-    if (solve(0, 0)) {
-        printf("\nSolution:\n");
-        printSudoku();
-    } else {
-        printf("\nNo solution found.\n");
-    }
+}
 
+int main() {
+    while(true){
+        int i, j;
+        
+        
+        char *arr = NULL; // initialize pointer to NULL
+    
+        int size = 0;
+        int capacity = 0; // current capacity of the array
+        
+
+    
+        char ch;
+        
+        while ((ch = getchar()) != '\n') {
+            if (size == capacity) {
+                capacity += CHUNK_SIZE;
+                arr = (char *) realloc(arr, capacity * sizeof(char));
+            }
+    
+            arr[size++] = ch;
+        }
+    
+        arr[size] = '\0'; // add null terminator to the end of the string
+        printf("\n");
+        for (i = 0; i < size; i++) {
+            printf("%c", arr[i]);
+        }
+        //check if the arrary has anything other than numbers & "."s.
+        int y=0;
+        check_array(arr, size, &y);
+        if(y!=1){
+            // Check if the number of characters entered is 81
+            if (size != 81) {
+                printf("\nError3\n");
+                
+            }else{
+               
+                // Take input of the Sudoku puzzle
+                int index = 0;
+                for (int i = 0; i < N; i++) {
+                    for (int j = 0; j < N; j++) {
+                        sudoku[i][j] = *(arr + index);
+                        index++;
+                    }
+                }
+                
+                free(arr); // free the memory allocated
+                //checking for duplicates
+                int x=0;
+                check_duplicate(sudoku,&x);
+                if(x!=1){
+                    // Initialize the row, col, and box arrays
+                    initialize();
+                    // Solve the Sudoku puzzle
+                    if (solve(0, 0)) {
+                        printSudoku();
+                        printf("\n");
+                    } else {
+                        printf("\nNo solution found.\n");
+                    }
+                }
+            }
+        }
+    }
     return 0;
 }
