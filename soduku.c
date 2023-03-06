@@ -9,12 +9,12 @@
 
 #define N 9
 #define UNASSIGNED '.'
-#define MAX_LINES 100  // maximum number of lines to read
+#define MAX_LINES 100  /*maximum number of lines to read*/
 
 int row[N][N], col[N][N], box[N][N];
 char sudoku[N][N];
 
-// Function to initialize row, col, and box arrays
+/*Function to initialize row, col, and box arrays*/
 void initialize() {
     int i, j, k;
 
@@ -39,7 +39,7 @@ void initialize() {
     }
 }
 
-// Function to solve the Sudoku puzzle
+/*Function to solve the Sudoku puzzle*/
 int solve(int i, int j) {
     int k;
 
@@ -82,7 +82,7 @@ int solve(int i, int j) {
     return 0;
 }
 
-// Function to print the solved Sudoku puzzle
+/*Function to print the solved Sudoku puzzle*/
 void printSudoku() {
     int i, j;
     printf("\n");
@@ -94,17 +94,19 @@ void printSudoku() {
 }
 
 void check_duplicate(char sudoku[N][N],int *x) {
-    for (int i = 0; i < N; i++) {
+    int i;
+    for (i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
             char current = sudoku[i][j];
 
-            // Skip checking if the character is "."
+            /*Skip checking if the character is "."*/
             if (current == '.') {
                 continue;
             }
 
-            // Check for duplicates in the row
-            for (int k = j+1 ; k < N; k++) {                
+            /*Check for duplicates in the row*/
+            int k;
+            for (k = j+1 ; k < N; k++) {                
                 if (sudoku[i][k] == current && sudoku[i][k] != '.') {
                     printf("\nError\n");
                     *x=1;
@@ -112,8 +114,9 @@ void check_duplicate(char sudoku[N][N],int *x) {
                 }
             }
 
-            // Check for duplicates in the column
-            for (int k = i + 1; k < N; k++) {
+            /*Check for duplicates in the column*/
+            int k;
+            for (k = i + 1; k < N; k++) {
                 if (sudoku[k][j] == current && sudoku[k][j] != '.') {
                     printf("\nError\n");
                     *x=1;
@@ -125,7 +128,8 @@ void check_duplicate(char sudoku[N][N],int *x) {
 }
 
 void check_array(char arr[], int size, int* y) {
-    for (int i = 0; i < size; i++) {
+    int i;
+    for (i = 0; i < size; i++) {
         char current = arr[i];
         if ((current < '0' || current > '9') && current != '.') {
             printf("\nError\n");
@@ -139,30 +143,30 @@ void check_array(char arr[], int size, int* y) {
 int main() {
         int i, x , y;
         
-        int capacity = 0; // current capacity of the array
+        int capacity = 0; /*current capacity of the array*/
     
         char ch;
 
-        char *lines[MAX_LINES];  // array of pointers to hold each line
-        char arr[100];  // buffer to hold each line
-        int num_lines = 0;  // counter for the number of lines read
-        FILE *file = fopen("testSudoku.in", "r");  // try to open the file for reading
+        char *lines[MAX_LINES];  /*array of pointers to hold each line*/
+        char arr[100];  /*buffer to hold each line*/
+        int num_lines = 0;  /*counter for the number of lines read*/
+        FILE *file = fopen("testSudoku.in", "r");  /*try to open the file for reading*/
 
         if (file == NULL) {
-            //printf("File not found. Enter input from the terminal:\n");
+            printf("File not found. Enter input from the terminal:\n");
 
-            // read input lines from the terminal until EOF is reached
+            /*read input lines from the terminal until EOF is reached*/
             while (fgets(arr, 100, stdin) != NULL && num_lines < MAX_LINES) {
-                // allocate memory for the line and copy it into the array
+                /*allocate memory for the line and copy it into the array*/
                 
                 lines[num_lines] = malloc(sizeof(char) * (strlen(arr) + 1));
                 strcpy(lines[num_lines], arr);
                 num_lines++;
             }
         } else {
-            // read input lines from the file until EOF is reached
+            /*read input lines from the file until EOF is reached*/
             while (fgets(arr, 100, file) != NULL && num_lines < MAX_LINES) {
-                // allocate memory for the line and copy it into the array
+                /*allocate memory for the line and copy it into the array*/
                 
                 lines[num_lines] = malloc(sizeof(char) * (strlen(arr) + 1));
                 strcpy(lines[num_lines], arr);
@@ -176,17 +180,17 @@ int main() {
                     printf("%c", arr[i]);
                 }
 
-                //check if the arrary has anything other than numbers & "."s.
+                /*check if the arrary has anything other than numbers & "."s.*/
                 y=0;
                 check_array(arr, size, &y);
                 if(y!=1){
-                    // Check if the number of characters entered is 81
+                    /*Check if the number of characters entered is 81*/
                     if (size != 81) {
                         printf("\nError\n");
                         
                     }else{
                     
-                        // Take input of the Sudoku puzzle
+                        /*Take input of the Sudoku puzzle*/
                         int index = 0;
                         for (int i = 0; i < N; i++) {
                             for (int j = 0; j < N; j++) {
@@ -194,13 +198,13 @@ int main() {
                                 index++;
                             }
                         }
-                        //checking for duplicates
+                        /*checking for duplicates*/
                         x=0;
                         check_duplicate(sudoku,&x);
                         if(x!=1){
-                            // Initialize the row, col, and box arrays
+                            /*Initialize the row, col, and box arrays*/
                             initialize();
-                            // Solve the Sudoku puzzle
+                            /*Solve the Sudoku puzzle*/
                             if (solve(0, 0)) {
                                 printSudoku();
                                 printf("\n");
@@ -213,10 +217,11 @@ int main() {
                 
             }
 
-            fclose(file);  // close the file when we're done
+            fclose(file);  /*close the file when we're done*/
         }
-        for (int i = 0; i < num_lines; i++) {
-            //printf("%s",lines[i]);
+        int i;
+        for (i = 0; i < num_lines; i++) {
+            printf("%s",lines[i]);
             free(lines[i]);  
         }
     return 0;
