@@ -142,59 +142,67 @@ void check_array(char arr[], int size, int* y) {
 }
 
 int main() {
-    while(true){
-      int i,x,y;
-
-
-        char *arr = NULL; /*initialize pointer to NULL*/
+    int counter = 0;
+    while(counter<100){
+        int i, x , y;
+        
+        char *arr = NULL; // initialize pointer to NULL
         int size = 0;
-        int capacity = 0; /*current capacity of the array*/
-
-
-
+        int capacity = 0; // current capacity of the array
+    
         char ch;
+
+        // open file if it exists, otherwise read from the terminal
+        FILE *file = fopen("testSoduku.in", "r");
+        if (file != NULL) {
+            freopen("testSudoku.in", "r", stdin);
+        }
 
         while ((ch = getchar()) != '\n') {
             if (size == capacity) {
                 capacity += CHUNK_SIZE;
                 arr = (char *) realloc(arr, capacity * sizeof(char));
             }
-
+    
             arr[size++] = ch;
         }
 
-
+        // close the file if it was opened
+        if (file != NULL) {
+            fclose(file);
+        }
         printf("\n");
         for (i = 0; i < size; i++) {
             printf("%c", arr[i]);
         }
-        /*check if the arrary has anything other than numbers & "."s.*/
+
+        //check if the arrary has anything other than numbers & "."s.
         y=0;
         check_array(arr, size, &y);
         if(y!=1){
-            /*Check if the number of characters entered is 81*/
+            // Check if the number of characters entered is 81
             if (size != 81) {
-                printf("\nError\n");
-           }else{
-
-                /*Take input of the Sudoku puzzle*/
+                printf("\nError3\n");
+                
+            }else{
+               
+                // Take input of the Sudoku puzzle
                 int index = 0;
-                int i,j;
-                for (i = 0; i < N; i++) {
-                  for ( j = 0; j < N; j++) {
+                for (int i = 0; i < N; i++) {
+                    for (int j = 0; j < N; j++) {
                         sudoku[i][j] = *(arr + index);
                         index++;
                     }
                 }
-
-                free(arr); /* free the memory allocated*/
-                /*checking for duplicates*/
+                
+                free(arr); // free the memory allocated
+                //checking for duplicates
                 x=0;
                 check_duplicate(sudoku,&x);
                 if(x!=1){
-                    /*Initialize the row, col, and box arrays*/
+                    // Initialize the row, col, and box arrays
                     initialize();
-                    /*Solve the Sudoku puzzle*/
+                    // Solve the Sudoku puzzle
                     if (solve(0, 0)) {
                         printSudoku();
                         printf("\n");
@@ -204,6 +212,7 @@ int main() {
                 }
             }
         }
+        counter++;
     }
     return 0;
 }
