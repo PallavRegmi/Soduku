@@ -58,7 +58,7 @@ int solve(int i, int j) {
     for (k = 0; k < N; k++) {
         if (!row[i][k] && !col[j][k] && !box[(i/3)*3 + j/3][k]) {
             sudoku[i][j] = k + '1';
-                        row[i][k] = 1;
+            row[i][k] = 1;
             col[j][k] = 1;
             box[(i/3)*3 + j/3][k] = 1;
 
@@ -88,7 +88,7 @@ void printSudoku() {
     for (i = 0; i < N; i++) {
         for (j = 0; j < N; j++) {
             printf("%c", sudoku[i][j]);
-        }
+                   }
     }
     printf("\n");
 }
@@ -118,7 +118,7 @@ void check_duplicate(char sudoku[N][N],int *x) {
 
             for (k = i + 1; k < N; k++) {
                 if (sudoku[k][j] == current && sudoku[k][j] != '.') {
-     printf("Error\n\n");
+                    printf("Error\n\n");
                     *x=1;
                     return;
                 }
@@ -178,7 +178,7 @@ int main(void) {
                             for ( j = 0; j < N; j++) {
                                 sudoku[i][j] = *(arr + index);
                                 index++;
-                           }
+                            }
                         }
                         /*checking for duplicates*/
                         x=0;
@@ -200,4 +200,3 @@ int main(void) {
             }
             return 0;
         }
-        
