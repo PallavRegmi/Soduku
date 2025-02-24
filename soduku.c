@@ -1,8 +1,3 @@
-/*Pallav Regmi*/
-/*CS241-2DK*/
-/*Lab04*/
-
-
 #include <stdio.h>
 #include<stdlib.h>
 #include<string.h>
